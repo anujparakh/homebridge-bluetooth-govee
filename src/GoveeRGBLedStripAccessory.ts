@@ -1,27 +1,27 @@
+import { GoveeLightStrip } from 'govee-bt-lightstrips';
 import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
+import * as goveeBT from 'govee-bt-lightstrips'
 
-import { HomebridgeBluetoothGovee } from './platform';
+import { BluetoothGoveeLights } from './platform';
 
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
  * Each accessory may expose multiple services of different service types.
  */
-export class HomebridgeBluetoothGoveeAccessory {
+export class GoveeRGBLedStripAccessory {
   private service: Service;
 
   /**
    * These are just used to create a working example
    * You should implement your own code to track the state of your accessory
    */
-  private exampleStates = {
-    On: false,
-    Brightness: 100,
-  };
+  private ledStrip: GoveeLightStrip | undefined
 
   constructor(
-    private readonly platform: HomebridgeBluetoothGovee,
+    private readonly platform: BluetoothGoveeLights,
     private readonly accessory: PlatformAccessory,
+    private readonly discoveredStrip: GoveeLightStrip,
   ) {
 
     // set accessory information
@@ -36,7 +36,7 @@ export class HomebridgeBluetoothGoveeAccessory {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.exampleDisplayName);
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device);
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Lightbulb
@@ -62,11 +62,11 @@ export class HomebridgeBluetoothGoveeAccessory {
      */
 
     // Example: add two "motion sensor" services to the accessory
-    const motionSensorOneService = this.accessory.getService('Motion Sensor One Name') ||
-      this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor One Name', 'YourUniqueIdentifier-1');
+    // const motionSensorOneService = this.accessory.getService('Motion Sensor One Name') ||
+    //   this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor One Name', 'YourUniqueIdentifier-1');
 
-    const motionSensorTwoService = this.accessory.getService('Motion Sensor Two Name') ||
-      this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor Two Name', 'YourUniqueIdentifier-2');
+    // const motionSensorTwoService = this.accessory.getService('Motion Sensor Two Name') ||
+    //   this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor Two Name', 'YourUniqueIdentifier-2');
 
     /**
      * Updating characteristics values asynchronously.
@@ -77,18 +77,18 @@ export class HomebridgeBluetoothGoveeAccessory {
      * the `updateCharacteristic` method.
      *
      */
-    let motionDetected = false;
-    setInterval(() => {
-      // EXAMPLE - inverse the trigger
-      motionDetected = !motionDetected;
+  //   let motionDetected = false;
+  //   setInterval(() => {
+  //     // EXAMPLE - inverse the trigger
+  //     motionDetected = !motionDetected;
 
-      // push the new value to HomeKit
-      motionSensorOneService.updateCharacteristic(this.platform.Characteristic.MotionDetected, motionDetected);
-      motionSensorTwoService.updateCharacteristic(this.platform.Characteristic.MotionDetected, !motionDetected);
+  //     // push the new value to HomeKit
+  //     motionSensorOneService.updateCharacteristic(this.platform.Characteristic.MotionDetected, motionDetected);
+  //     motionSensorTwoService.updateCharacteristic(this.platform.Characteristic.MotionDetected, !motionDetected);
 
-      this.platform.log.debug('Triggering motionSensorOneService:', motionDetected);
-      this.platform.log.debug('Triggering motionSensorTwoService:', !motionDetected);
-    }, 10000);
+  //     this.platform.log.debug('Triggering motionSensorOneService:', motionDetected);
+  //     this.platform.log.debug('Triggering motionSensorTwoService:', !motionDetected);
+  //   }, 10000);
   }
 
   /**
@@ -97,7 +97,11 @@ export class HomebridgeBluetoothGoveeAccessory {
    */
   async setOn(value: CharacteristicValue) {
     // implement your own code to turn your device on/off
-    this.exampleStates.On = value as boolean;
+    if(this.ledStrip)
+    {
+      goveeBT.setPowerOfStrip(this.ledStrip, value as boolean)
+      this.ledStrip.power = value as boolean
+    }
 
     this.platform.log.debug('Set Characteristic On ->', value);
   }
@@ -117,7 +121,12 @@ export class HomebridgeBluetoothGoveeAccessory {
    */
   async getOn(): Promise<CharacteristicValue> {
     // implement your own code to check if the device is on
-    const isOn = this.exampleStates.On;
+    if(!this.ledStrip)
+    {
+      return false
+    }
+
+    const isOn = this.ledStrip!.power;
 
     this.platform.log.debug('Get Characteristic On ->', isOn);
 
@@ -132,8 +141,12 @@ export class HomebridgeBluetoothGoveeAccessory {
    * These are sent when the user changes the state of an accessory, for example, changing the Brightness
    */
   async setBrightness(value: CharacteristicValue) {
-    // implement your own code to set the brightness
-    this.exampleStates.Brightness = value as number;
+
+    if(this.ledStrip)
+    {
+      goveeBT.setBrightnessOfStrip(this.ledStrip, value as number)
+      this.ledStrip.brightness = value as number
+    }
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
   }

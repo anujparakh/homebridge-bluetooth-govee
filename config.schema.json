@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "HomebridgeBluetoothGovee",
+  "pluginAlias": "BluetoothGoveeLights",
   "pluginType": "platform",
   "singular": true,
   "schema": {
