@@ -1,5 +1,5 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
-import * as goveeBT from 'govee-bt-lightstrips'
+import * as goveeBT from 'govee-bt-lightstrips';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { GoveeRGBLedStripAccessory } from './GoveeRGBLedStripAccessory';
@@ -54,7 +54,7 @@ export class BluetoothGoveeLights implements DynamicPlatformPlugin {
 
     goveeBT.registerDiscoveryCallback((ledStrip) => {
       // Unique ID of accessory
-      const uuid = this.api.hap.uuid.generate(ledStrip.uuid)
+      const uuid = this.api.hap.uuid.generate(ledStrip.uuid);
 
       // see if an accessory with the same uuid has already been registered and restored from
       const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
@@ -66,8 +66,7 @@ export class BluetoothGoveeLights implements DynamicPlatformPlugin {
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new GoveeRGBLedStripAccessory(this, existingAccessory, ledStrip);
-      }
-      else {
+      } else {
         // the accessory does not yet exist, so we need to create it
         this.log.info('Adding new accessory:', ledStrip.name);
 
@@ -85,9 +84,9 @@ export class BluetoothGoveeLights implements DynamicPlatformPlugin {
         // link the accessory to your platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       }
-    })
+    });
 
-    goveeBT.startDiscovery()
+    goveeBT.startDiscovery();
 
   }
 }

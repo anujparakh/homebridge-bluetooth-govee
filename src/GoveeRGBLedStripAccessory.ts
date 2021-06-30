@@ -1,6 +1,6 @@
 import { GoveeLightStrip } from 'govee-bt-lightstrips';
 import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
-import * as goveeBT from 'govee-bt-lightstrips'
+import * as goveeBT from 'govee-bt-lightstrips';
 
 import { BluetoothGoveeLights } from './platform';
 
@@ -16,7 +16,7 @@ export class GoveeRGBLedStripAccessory {
    * These are just used to create a working example
    * You should implement your own code to track the state of your accessory
    */
-  private ledStrip: GoveeLightStrip | undefined
+  private ledStrip: GoveeLightStrip | undefined;
 
   constructor(
     private readonly platform: BluetoothGoveeLights,
@@ -77,14 +77,14 @@ export class GoveeRGBLedStripAccessory {
      * the `updateCharacteristic` method.
      *
      */
-  //   let motionDetected = false;
-  //   setInterval(() => {
-  //     // EXAMPLE - inverse the trigger
-  //     motionDetected = !motionDetected;
+    //   let motionDetected = false;
+    //   setInterval(() => {
+    //     // EXAMPLE - inverse the trigger
+    //     motionDetected = !motionDetected;
 
-  //     // push the new value to HomeKit
-  //     motionSensorOneService.updateCharacteristic(this.platform.Characteristic.MotionDetected, motionDetected);
-  //     motionSensorTwoService.updateCharacteristic(this.platform.Characteristic.MotionDetected, !motionDetected);
+    //     // push the new value to HomeKit
+    //     motionSensorOneService.updateCharacteristic(this.platform.Characteristic.MotionDetected, motionDetected);
+    //     motionSensorTwoService.updateCharacteristic(this.platform.Characteristic.MotionDetected, !motionDetected);
 
   //     this.platform.log.debug('Triggering motionSensorOneService:', motionDetected);
   //     this.platform.log.debug('Triggering motionSensorTwoService:', !motionDetected);
@@ -97,10 +97,9 @@ export class GoveeRGBLedStripAccessory {
    */
   async setOn(value: CharacteristicValue) {
     // implement your own code to turn your device on/off
-    if(this.ledStrip)
-    {
-      goveeBT.setPowerOfStrip(this.ledStrip, value as boolean)
-      this.ledStrip.power = value as boolean
+    if(this.ledStrip) {
+      goveeBT.setPowerOfStrip(this.ledStrip, value as boolean);
+      this.ledStrip.power = value as boolean;
     }
 
     this.platform.log.debug('Set Characteristic On ->', value);
@@ -121,9 +120,8 @@ export class GoveeRGBLedStripAccessory {
    */
   async getOn(): Promise<CharacteristicValue> {
     // implement your own code to check if the device is on
-    if(!this.ledStrip)
-    {
-      return false
+    if(!this.ledStrip) {
+      return false;
     }
 
     const isOn = this.ledStrip!.power;
@@ -142,10 +140,9 @@ export class GoveeRGBLedStripAccessory {
    */
   async setBrightness(value: CharacteristicValue) {
 
-    if(this.ledStrip)
-    {
-      goveeBT.setBrightnessOfStrip(this.ledStrip, value as number)
-      this.ledStrip.brightness = value as number
+    if(this.ledStrip) {
+      goveeBT.setBrightnessOfStrip(this.ledStrip, value as number);
+      this.ledStrip.brightness = value as number;
     }
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
